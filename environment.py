@@ -171,13 +171,25 @@ class Game:
 
             state,currentAction = self.updateAgent(state,currentAction)
 
+        if reward == 0:
+            print()
+            print("It was a draw!")
+        elif reward == -1:
+            print()
+            print("You won!")
+            print()
+        else:
+            print()
+            print("You lost!")
+            print()
+
         self.agent.update(state, None, currentAction, None, reward)
 
 
 
-    def start(self):
+    def start(self,training):
         #Then real player is playing
-        if self.teacher is None:
+        if not training:
             print()
             print("Do you wish to go first?")
             print("Options: 'y', 'n', 'quit'")
