@@ -99,20 +99,20 @@ class Game:
             #agent move
             self.agentMove(currentAction)
             #check if game done
-            if self.checkDraw():
-                reward = 0 #reward 0 if draw
-                break;
             if self.checkWin():
                 reward = 1 #reward 1 if agent wins
+                break;
+            if self.checkDraw():
+                reward = 0 #reward 0 if draw
                 break;
             #player move
             self.trainMove()
             #check if game done
-            if self.checkDraw():
-                reward = 0 #reward 0 if draw
-                break;
             if self.checkWin():
                 reward = -1 #reward -1 if player wins
+                break;
+            if self.checkDraw():
+                reward = 0 #reward 0 if draw
                 break;
 
             state,currentAction = self.updateAgent(state,currentAction)
@@ -153,21 +153,22 @@ class Game:
             #agent move
             self.agentMove(currentAction)
             #check if game done
-            if self.checkDraw():
-                reward = 0 #reward 0 if draw
-                break;
             if self.checkWin():
                 reward = 1 #reward 1 if agent wins
+                break;
+            if self.checkDraw():
+                reward = 0 #reward 0 if draw
                 break;
             #player move
             self.personMove()
             #check if game done
-            if self.checkDraw():
-                reward = 0 #reward 0 if draw
-                break;
             if self.checkWin():
                 reward = -1 #reward -1 if player wins
                 break;
+            if self.checkDraw():
+                reward = 0 #reward 0 if draw
+                break;
+
 
             state,currentAction = self.updateAgent(state,currentAction)
 
