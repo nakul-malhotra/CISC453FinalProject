@@ -53,8 +53,10 @@ class GameLearning(object):
                     print("Invalid input. Please choose 'y' or 'n'.")
 
         while True:
-            game = Game(self.agent)
+            game = Game(self.agent, args.agent_type)
             game.start()
+            #game = Game(self.agent)
+            #game.start()
             self.games_played += 1
             if not play_again():
                 print("OK. Quitting.")
@@ -65,11 +67,11 @@ class GameLearning(object):
         teacher = Teacher()
         # Train for alotted number of episodes
         while self.games_played < episodes:
-            game = Game(self.agent, teacher=teacher)
-            game.start()
+            game = Game(self.agent, args.agent_type)
+            game.start(training=True)
             self.games_played += 1
             # Monitor progress
-            if self.games_played % 10000 == 0:
+            if self.games_played % 1000 == 0:
                 print("Games played: %i" % self.games_played)
 
         plot_agent_reward(self.agent.rewards)

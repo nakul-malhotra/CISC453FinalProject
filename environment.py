@@ -2,9 +2,9 @@ import random
 
 
 class Game:
-    def __init__(self, agent, teacher=None):
+    def __init__(self, agent, type):
         self.agent = agent
-        self.teacher = teacher
+        self.type = type
         self.board = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
 
 
@@ -187,7 +187,7 @@ class Game:
 
 
 
-    def start(self,training):
+    def start(self,training=False):
         #Then real player is playing
         if not training:
             print()

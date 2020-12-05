@@ -7,7 +7,7 @@ import random
 
 
 class Learner(ABC):
-    def __init__(self, alpha, gamma, eps):
+    def __init__(self, alpha, gamma, eps=0.1):
         # parameters
         self.alpha = alpha
         self.gamma = gamma
