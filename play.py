@@ -1,107 +1,86 @@
-
-import argparse
 import os
-import pickle
 import sys
 import numpy as np
 import matplotlib.pylab as plt
-
 from agent import Qlearner, SARSAlearner
-from teacher import Teacher
 from environment import Game
 
 
+'''
+Plots the rewards
+'''
 def plot_agent_reward(rewards):
-    """ Function to plot agent's accumulated reward vs. iteration """
     plt.plot(np.cumsum(rewards))
     plt.title('Agent Cumulative Reward vs. Iteration')
     plt.ylabel('Reward')
     plt.xlabel('Episode')
     plt.show()
 
-class GameLearning(object):
-    """
-    A class that holds the state of the learning process. Learning
-    agents are created/loaded here, and a count is kept of the
-    games that have been played.
-    """
-    def __init__(self, args, alpha=0.5, gamma=0.9, epsilon=0.1):
-        self.games_played = 0
-
-        if args.plot:
-            plot_agent_reward(self.agent.rewards)
-            sys.exit(0)
-
-        if args.agent_type == "q":
+class PlayGame():
+    def __init__(self, agentType, numOfEpisodes, alpha=0.5, gamma=0.9, epsilon=0.1):
+        self.numOfEpisodes = numOfEpisodes
+        if agentType == "q":
             self.agent = Qlearner(alpha,gamma,epsilon)
         else:
             self.agent = SARSAlearner(alpha,gamma,epsilon)
 
-    def beginPlaying(self):
-        """ Loop through game iterations with a human player. """
-        print("Welcome to Tic-Tac-Toe. You are 'X' and the computer is 'O'.")
 
-        def play_again():
-            print("Games played: %i" % self.games_played)
-            while True:
-                play = input("Do you want to play again? [y/n]: ")
-                if play == 'y' or play == 'yes':
-                    return True
-                elif play == 'n' or play == 'no':
-                    return False
-                else:
-                    print("Invalid input. Please choose 'y' or 'n'.")
 
+    def userPlayAgent(self):
         while True:
-            game = Game(self.agent, args.agent_type)
+            game = Game(self.agent)
             game.start()
-            #game = Game(self.agent)
-            #game.start()
-            self.games_played += 1
-            if not play_again():
-                print("OK. Quitting.")
-                break
+            playAgain = input("Would you like to play again? ('y', 'n'): ")
+            if playAgain=='n':
+                print("See you later!")
+                break;
+            print()
+            print("Okay lets play again!")
+            print()
 
-    def beginTeaching(self, episodes):
-        """ Loop through game iterations with a teaching agent. """
-        teacher = Teacher()
-        # Train for alotted number of episodes
-        while self.games_played < episodes:
-            game = Game(self.agent, args.agent_type)
+    '''
+    Teach agent - intelligence depends on number of games
+    '''
+    def teachAgent(self):
+        iteration = 0
+        while iteration < self.numOfEpisodes:
+            game = Game(self.agent)
             game.start(training=True)
-            self.games_played += 1
-            # Monitor progress
-            if self.games_played % 1000 == 0:
-                print("Games played: %i" % self.games_played)
-
+            iteration += 1
+            if iteration % 10000 == 0:
+                print("Training round: " + str(iteration))
         plot_agent_reward(self.agent.rewards)
-        self.beginPlaying()
+
+'''
+Gets Specification on training iterations and agent type from user
+'''
+def getUserValues():
+    print("Welcome to Tic-Tac-Toe")
+    #get agentType
+    while True:
+        print()
+        agentType = input("Please input Agent Type (qlearning or sarsa) 'q' or 's': ")
+        if agentType == 'q' or agentType == 's':
+            print()
+            if agentType == 'q':
+                print('You entered Q-learning!')
+            else:
+                print('You entered Sarsa!')
+            break
+        print("Invalid agent type: " + agentType)
 
 
-if __name__ == "__main__":
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Play Tic-Tac-Toe.")
-    parser.add_argument('-a', "--agent_type", type=str, default="q",
-                        help="Specify the computer agent learning algorithm. "
-                             "AGENT_TYPE='q' for Q-learning and ='s' for Sarsa-learning")
-    parser.add_argument("-l", "--load", action="store_true",
-                        help="whether to load trained agent")
-    parser.add_argument("-t", "--teacher_episodes", default=None, type=int,
-                        help="employ teacher agent who knows the optimal "
-                             "strategy and will play for TEACHER_EPISODES games")
-    parser.add_argument("-p", "--plot", action="store_true",
-                        help="whether to plot reward vs. episode of stored agent "
-                             "and quit")
-    args = parser.parse_args()
-    assert args.agent_type == 'q' or args.agent_type == 's', \
-        "learner type must be either 'q' or 's'."
-    if args.plot:
-        assert args.load, "Must load an agent to plot reward."
-        assert args.teacher_episodes is None, \
-            "Cannot plot and teach concurrently; must chose one or the other."
+    #getEpisodes
+    print()
+    print("For smart agent enter four hundred thousand (400000): ")
+    print()
+    numOfEpisodes = int(input("Please enter the number of episodes you want to train agent: "))
+    game = PlayGame(agentType, numOfEpisodes)
+    game.teachAgent()
+    print("Done Teaching!")
+    game.userPlayAgent()
 
-    gl = GameLearning(args)
-    if args.teacher_episodes is not None:
-        gl.beginTeaching(args.teacher_episodes)
-    else:
-        gl.beginPlaying()
+
+
+if __name__=="__main__":
+    getUserValues()
