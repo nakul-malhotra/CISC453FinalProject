@@ -1,6 +1,6 @@
 import random
 
-
+#delete this
 class Game:
     def __init__(self, agent):
         self.agent = agent

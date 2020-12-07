@@ -5,6 +5,7 @@ import matplotlib.pylab as plt
 from agent import Qlearner, SARSAlearner
 from environment import Game
 
+#delete this
 
 '''
 Plots the rewards
